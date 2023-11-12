@@ -75,18 +75,17 @@ class RPN_Calc
                 tokens.Add(new Number(double.Parse(number)));
                 number = "";
             }
-            if (c == '(' || c == ')' || c == '+' || c == '-' || c == '*' || c == '/') tokens.Add(new Operation(c));
+            if (c == '(' || c == ')' || c == '+' || c == '-' || c == '*' || c == '/')
+            {
+                tokens.Add(new Operation(c));
+            }
             if (c == '(')
             {
-                var par = ((Parenthesis)token);
-                if (par != null && par.Type == TokenType.PARENTHESIS && par == '(')
-                {
-                    tokens.Add(new Parenthesis(')'));
-                }
-                else
-                {
-                    tokens.Add(new Parenthesis('('));
-                }
+                tokens.Add(new Parenthesis('('));
+            }
+            if (c == ')')
+            {
+                tokens.Add(new Parenthesis(')'));
             }
         }
         if (number != "") tokens.Add(new Number(double.Parse(number)));
@@ -99,7 +98,10 @@ class RPN_Calc
         var stack = new Stack<Token>();
         foreach (var token in tokens)
         {
-            if (token.Type == TokenType.NUMBER) output.Add(token);
+            if (token.Type == TokenType.NUMBER)
+            {
+                output.Add(token);
+            }
             else if (token.Type == TokenType.OPERATION)
             {
                 while (stack.Count != 0 && stack.Peek().Type == TokenType.OPERATION)
@@ -112,13 +114,22 @@ class RPN_Calc
             {
                 stack.Push(token);
             }
-            else
+            else if (token.Type == TokenType.PARENTHESIS && ((Parenthesis)token).Par == ')')
             {
-                while (stack.Peek().Type != TokenType.PARENTHESIS) output.Add(stack.Pop());
-                stack.Pop();
+                while (stack.Count != 0 && stack.Peek().Type != TokenType.PARENTHESIS)
+                {
+                    output.Add(stack.Pop());
+                }
+                if (stack.Count != 0 && stack.Peek().Type == TokenType.PARENTHESIS)
+                {
+                    stack.Pop();
+                }
             }
         }
-        while (stack.Count != 0) output.Add(stack.Pop());
+        while (stack.Count != 0)
+        {
+            output.Add(stack.Pop());
+        }
         return output;
     }
 
@@ -131,7 +142,7 @@ class RPN_Calc
             {
                 stack.Push(((Number)token).Value);
             }
-            else
+            else if (token.Type == TokenType.OPERATION)
             {
                 var b = stack.Pop();
                 var a = stack.Pop();
@@ -141,6 +152,10 @@ class RPN_Calc
                 else if (op == '*') stack.Push(a * b);
                 else stack.Push(a / b);
             }
+        }
+        if (stack.Count != 1)
+        {
+            throw new InvalidOperationException("Invalid expression");
         }
         return stack.Pop();
     }
