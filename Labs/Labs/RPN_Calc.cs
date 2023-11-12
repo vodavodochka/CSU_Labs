@@ -65,7 +65,7 @@ class RPN_Calc
         var number = "";
         foreach (var c in expression)
         {
-            if (char.IsDigit(c))
+            if (char.IsDigit(c) || c == ',')
             {
                 number += c;
                 continue;
@@ -75,23 +75,33 @@ class RPN_Calc
                 tokens.Add(new Number(double.Parse(number)));
                 number = "";
             }
-            if (c == '(' || c == ')' || c == '+' || c == '-' || c == '*' || c == '/')
+            if (c == '+' || c == '-' || c == '*' || c == '/')
             {
                 tokens.Add(new Operation(c));
             }
-            if (c == '(')
+            else if (c == '(' || c == ')')
             {
-                tokens.Add(new Parenthesis('('));
-            }
-            if (c == ')')
-            {
-                tokens.Add(new Parenthesis(')'));
+                tokens.Add(new Parenthesis(c));
             }
         }
         if (number != "") tokens.Add(new Number(double.Parse(number)));
         return tokens;
     }
 
+    static int GetPrecedence(Operation op)
+    {
+        switch (op.Op)
+        {
+            case '+':
+            case '-':
+                return 1;
+            case '*':
+            case '/':
+                return 2;
+            default:
+                throw new ArgumentException("Unknown operator");
+        }
+    }
     static List<Token> ToPostfix(List<Token> tokens)
     {
         var output = new List<Token>();
@@ -104,25 +114,38 @@ class RPN_Calc
             }
             else if (token.Type == TokenType.OPERATION)
             {
+                Operation o1 = (Operation)token;
+
                 while (stack.Count != 0 && stack.Peek().Type == TokenType.OPERATION)
                 {
-                    output.Add(stack.Pop());
+                    Operation o2 = (Operation)stack.Peek();
+
+                    if (GetPrecedence(o1) <= GetPrecedence(o2))
+                    {
+                        output.Add(stack.Pop());
+                    }
+                    else
+                    {
+                        break;
+                    }
                 }
                 stack.Push(token);
             }
-            else if (token.Type == TokenType.PARENTHESIS && ((Parenthesis)token).Par == '(')
+            else if (token.Type == TokenType.PARENTHESIS)
             {
-                stack.Push(token);
-            }
-            else if (token.Type == TokenType.PARENTHESIS && ((Parenthesis)token).Par == ')')
-            {
-                while (stack.Count != 0 && stack.Peek().Type != TokenType.PARENTHESIS)
+                Parenthesis pat = (Parenthesis)token;
+
+                if (pat.Par == '(')
                 {
-                    output.Add(stack.Pop());
+                    stack.Push(token);
                 }
-                if (stack.Count != 0 && stack.Peek().Type == TokenType.PARENTHESIS)
+                else if (pat.Par == ')')
                 {
-                    stack.Pop();
+                    while (stack.Count != 0 && stack.Peek().Type != TokenType.PARENTHESIS)
+                    {
+                        output.Add(stack.Pop());
+                    }
+                    stack.Pop(); // Pop the '('
                 }
             }
         }
