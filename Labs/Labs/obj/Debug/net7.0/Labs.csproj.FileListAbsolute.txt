@@ -1,0 +1,14 @@
+D:\Source\CSU\Labs\Labs\bin\Debug\net7.0\Labs.exe
+D:\Source\CSU\Labs\Labs\bin\Debug\net7.0\Labs.deps.json
+D:\Source\CSU\Labs\Labs\bin\Debug\net7.0\Labs.runtimeconfig.json
+D:\Source\CSU\Labs\Labs\bin\Debug\net7.0\Labs.dll
+D:\Source\CSU\Labs\Labs\bin\Debug\net7.0\Labs.pdb
+D:\Source\CSU\Labs\Labs\obj\Debug\net7.0\Labs.GeneratedMSBuildEditorConfig.editorconfig
+D:\Source\CSU\Labs\Labs\obj\Debug\net7.0\Labs.AssemblyInfoInputs.cache
+D:\Source\CSU\Labs\Labs\obj\Debug\net7.0\Labs.AssemblyInfo.cs
+D:\Source\CSU\Labs\Labs\obj\Debug\net7.0\Labs.csproj.CoreCompileInputs.cache
+D:\Source\CSU\Labs\Labs\obj\Debug\net7.0\Labs.dll
+D:\Source\CSU\Labs\Labs\obj\Debug\net7.0\refint\Labs.dll
+D:\Source\CSU\Labs\Labs\obj\Debug\net7.0\Labs.pdb
+D:\Source\CSU\Labs\Labs\obj\Debug\net7.0\Labs.genruntimeconfig.cache
+D:\Source\CSU\Labs\Labs\obj\Debug\net7.0\ref\Labs.dll

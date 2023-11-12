@@ -47,7 +47,7 @@ class Parenthesis : Token
     }
 }
 
-class Program
+class RPN_Calc
 {
     static void Main(string[] args)
     {
