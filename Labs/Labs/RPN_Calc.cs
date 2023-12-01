@@ -1,17 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
 
-enum TokenType
+abstract class Token
 {
-    NUMBER,
-    OPERATION,
-    PARENTHESIS
-}
 
-class Token
-{
-    public TokenType Type;
 }
 
 class Number : Token
@@ -21,7 +13,6 @@ class Number : Token
     public Number(double value)
     {
         this.Value = value;
-        this.Type = TokenType.NUMBER;
     }
 }
 
@@ -32,7 +23,6 @@ class Operation : Token
     public Operation(char op)
     {
         this.Op = op;
-        this.Type = TokenType.OPERATION;
     }
 }
 
@@ -43,7 +33,6 @@ class Parenthesis : Token
     public Parenthesis(char par)
     {
         this.Par = par;
-        this.Type = TokenType.PARENTHESIS;
     }
 }
 
@@ -102,21 +91,22 @@ class RPN_Calc
                 throw new ArgumentException("Unknown operator");
         }
     }
+
     static List<Token> ToPostfix(List<Token> tokens)
     {
         var output = new List<Token>();
         var stack = new Stack<Token>();
         foreach (var token in tokens)
         {
-            if (token.Type == TokenType.NUMBER)
+            if (token is Number)
             {
                 output.Add(token);
             }
-            else if (token.Type == TokenType.OPERATION)
+            else if (token is Operation)
             {
                 Operation o1 = (Operation)token;
 
-                while (stack.Count != 0 && stack.Peek().Type == TokenType.OPERATION)
+                while (stack.Count != 0 && stack.Peek() is Operation)
                 {
                     Operation o2 = (Operation)stack.Peek();
 
@@ -131,7 +121,7 @@ class RPN_Calc
                 }
                 stack.Push(token);
             }
-            else if (token.Type == TokenType.PARENTHESIS)
+            else if (token is Parenthesis)
             {
                 Parenthesis pat = (Parenthesis)token;
 
@@ -141,7 +131,7 @@ class RPN_Calc
                 }
                 else if (pat.Par == ')')
                 {
-                    while (stack.Count != 0 && stack.Peek().Type != TokenType.PARENTHESIS)
+                    while (stack.Count != 0 && !(stack.Peek() is Parenthesis))
                     {
                         output.Add(stack.Pop());
                     }
@@ -161,18 +151,14 @@ class RPN_Calc
         var stack = new Stack<double>();
         foreach (var token in tokens)
         {
-            if (token.Type == TokenType.NUMBER)
-            {
-                stack.Push(((Number)token).Value);
-            }
-            else if (token.Type == TokenType.OPERATION)
+            if (token is Operation)
             {
                 var b = stack.Pop();
                 var a = stack.Pop();
-                var op = ((Operation)token).Op;
-                if (op == '+') stack.Push(a + b);
-                else if (op == '-') stack.Push(a - b);
-                else if (op == '*') stack.Push(a * b);
+                var op = (Operation)token;
+                if (op.Op == '+') stack.Push(a + b);
+                else if (op.Op == '-') stack.Push(a - b);
+                else if (op.Op == '*') stack.Push(a * b);
                 else stack.Push(a / b);
             }
         }
